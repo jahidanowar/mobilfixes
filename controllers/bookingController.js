@@ -1,4 +1,5 @@
 //  Import Dependencies
+// const{ getDate, getMonth, getYear, isValid, format }= require("date-fns");
 const Booking = require("../models/bookingModel");
 const {
   mailToUserForBooking,
@@ -163,13 +164,50 @@ exports.search = catchAsync(async (req, res, next) => {
 /*
  *   Find Appointment Dates
  */
-// exports.appointmentDate = catchAsync(async (req, res, next) => {
-//   const appointmentDates = await Booking.find({
-//     status: { $ne: "completed" },
-//     appointmentTime: { $gt: Date.now() },
-//   })
-//     .sort({ appointmentTime: "asc" })
-//     .select("appointmentTime");
-
-//   res.status(200).json(appointmentDates);
-// });
+exports.appointmentDates = catchAsync(async (req, res, next) => {
+  const appointmentDates = await Booking.aggregate([
+    {
+      '$match': {
+        'status': {
+          '$ne': 'completed'
+        }, 
+        'appointmentTime': {
+          '$gte': new Date()
+        }
+      }
+    }, {
+      '$group': {
+        '_id': {
+          '$add': [
+            {
+              '$dayOfYear': '$appointmentTime'
+            }, {
+              '$multiply': [
+                400, {
+                  '$year': '$appointmentTime'
+                }
+              ]
+            }
+          ]
+        }, 
+        'appointments': {
+          '$sum': 1
+        }, 
+        'd': {
+          '$min': '$appointmentTime'
+        }
+      }
+    }, {
+      '$sort': {
+        '_id': 1
+      }
+    }, {
+      '$project': {
+        'date': '$d', 
+        'appointments': '$appointments', 
+        '_id': 0
+      }
+    }
+  ])
+  res.status(200).json(appointmentDates);
+});

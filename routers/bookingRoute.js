@@ -11,11 +11,10 @@ const router = express.Router();
 /*
  *  Appoinment Dates finding
  */
-// router.get(
-//   "/booking/appointmentDates",
-//   [checkAuth.verifyToken],
-//   bookingController.appointmentDate
-// );
+router.get(
+  "/booking/appointmentDates",
+  bookingController.appointmentDates
+);
 
 /*
  *   Loging Check & Store Booking
