@@ -47,6 +47,7 @@ const bookSchema = new Schema({
   },
   appointmentTime: {
     type: Date,
+    index:true
   },
   deliveredAt: {
     type: Date,

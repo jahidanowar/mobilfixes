@@ -1,11 +1,7 @@
 //  Import Dependencies
 // const{ getDate, getMonth, getYear, isValid, format }= require("date-fns");
 const Booking = require("../models/bookingModel");
-const {
-  mailToUserForBooking,
-  mailToShopAdminForBooking,
-  mailToSuperAdminForBooking,
-} = require("../utils/mailTransport");
+const {generateOrderNumber} = require('../utils/orderNumberGenerate');
 const Repair = require("../models/repairModel");
 const Device = require("../models/deviceModel");
 const catchAsync = require("../utils/catchAsync");
@@ -53,7 +49,7 @@ exports.store = catchAsync(async (req, res, next) => {
     location: location,
     shop: shop || null,
     service,
-    orderNumber: "mfix" + Math.random(),
+    orderNumber: generateOrderNumber(),
     device: deviceDocs,
     model: modelDocs,
     repaires: repairesDocs,

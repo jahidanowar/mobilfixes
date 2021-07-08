@@ -25,9 +25,9 @@ const mailToUserForSignup = (name, email) => {
     text: "Hello world",
     to: email,
     html: `
-  <h3>Hey ${name}, Welcome you, with a big Heart from Us.</h3>
-  <p>We'll send all the information on your email.</p>
-  `,
+    <h3>Hey ${name}, Welcome you, with a big Heart from Us.</h3>
+    <p>We'll send all the information on your email.</p>
+    `,
   });
 };
 
