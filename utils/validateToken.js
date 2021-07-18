@@ -10,7 +10,6 @@ const validateToken = (token) => {
     if (err) {
       return false;
     }
-    console.log(decoded.id);
     return decoded.id;
   });
 };

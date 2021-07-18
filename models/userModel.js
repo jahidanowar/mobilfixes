@@ -26,8 +26,19 @@ const userSchema = new Schema({
     type: String,
     required: true,
     default: "customer",
-    enum:["customer","manager","admin"]
+    enum: ["customer", "manager", "admin"],
   },
+  address: [
+    {
+      long: Number,
+      lat: Number,
+      addressLine1: String,
+      addressLine2: String,
+      city: String,
+      state: String,
+      zipcode: Number,
+    },
+  ],
   loaction: {
     type: Object,
   },

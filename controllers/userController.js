@@ -1,5 +1,6 @@
 // Import Dependencis
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 const crypto = require("crypto");
 const { validationResult } = require("express-validator");
 const User = require("../models/userModel");
@@ -10,6 +11,7 @@ const {
   mailToUserForSignup,
   mailToUserForPasswordReset,
 } = require("../utils/mailTransport");
+const { remove } = require("../models/userModel");
 
 /*
  * Working with User Sign Up Form
@@ -154,3 +156,87 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
   res.status(200).json({ message: "Passwod updated!" });
 });
+
+/*
+ *   Add New Address of User
+ */
+exports.addNewAddress = catchAsync(async (req, res, next) => {
+  const customerId = req.userId;
+  const {
+    long,
+    lat,
+    addressLine1,
+    addressLine2,
+    city,
+    state,
+    zipcode,
+  } = req.body;
+
+  await User.findByIdAndUpdate(customerId, {
+    $push: {
+      address: {
+        long: long,
+        lat: lat,
+        addressLine1: addressLine1,
+        addressLine2: addressLine2,
+        city: city,
+        state: state,
+        zipcode: zipcode,
+      },
+    },
+  });
+  return res.status(200).json({ message: "Successfull!" });
+});
+
+/*
+ *   Show Address of User
+ */
+exports.showUserAddress = catchAsync(async (req, res, next) => {
+  const customerId = req.userId;
+
+  const customerAddress = await User.findById(customerId).select("address");
+  return res.status(200).json(customerAddress);
+});
+
+/*
+*   User address update 
+*/
+exports.updateAddress = async (req, res, next) => {
+  const customerId = req.userId;
+  const { addressId } = req.query;
+
+  const updateAddress = {
+    $set: {
+      "address.$.long": req.body.long,
+      "address.$.lat": req.body.lat,
+      "address.$.addressLine1": req.body.addressLine1,
+      "address.$.addessLine2": req.body.addressLine2,
+      "address.$.city": req.body.city,
+      "address.$.state": req.body.state,
+      "address.$.zipcode": req.body.zipcode,
+    },
+  };
+
+  const customer = await User.findByIdAndUpdate(
+    {
+      _id: customerId,
+      address: { $elemMatch: { _id: mongoose.Types.ObjectId(addressId) } },
+    },
+    updateAddress
+  );
+
+  console.log(customer);
+};
+
+
+/*
+*  User address Delete route
+*/
+exports.deleteAddress = async (req, res, next) => {
+  const customerId = req.userId;
+  const { addressId } = req.query;
+
+  await User.findByIdAndUpdate(customerId, {
+    $pull: { address: { _id: addressId } },
+  });
+};

@@ -28,6 +28,20 @@ router.route("/login").post(userController.signIn);
 router
   .route("/me")
   .get([checkAuth.verifyToken, cache.cacheMiddleware(30)], userController.me);
+/*
+ *  Add New Address of User
+ */
+router.post('/addNewAddress',[checkAuth.verifyToken], userController.addNewAddress);
+
+/*
+ *  show Address of User
+//  */
+router.get('/address',[checkAuth.verifyToken], userController.showUserAddress);
+
+
+router.patch('/address',[checkAuth.verifyToken], userController.updateAddress);
+
+router.delete('/address',[checkAuth.verifyToken], userController.deleteAddress);
 
 /*
  *  Make a token to reset password
